@@ -8,19 +8,112 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var showExchangeInfo = false
+    @State var leftAmount = ""
+    @State var rightAmount = ""
+    
     var body: some View {
         ZStack {
+            //Background
             Image(.background)
-                .scaledToFit()
+                .resizable()
+                .ignoresSafeArea()
+            
             VStack {
-                Image(systemName: "globe")
-                    .imageScale(.large)
-                    .foregroundStyle(.tint)
-                    .padding()
-                Text("Hello, world!")
-                    .bold()
-                    .foregroundColor(.white)
+                //Poney Image
+                Image(.prancingpony)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 200)
+                
+                // Currency Exchange Text
+                Text("Currency Exchange")
+                    .font(.largeTitle)
+                    .foregroundStyle(.white)
+                
+                HStack {
+                    // Section Convertion
+                    
+                    // Left Side
+                    VStack {
+                        
+                        // Coin type
+                        HStack {
+                            // Image
+                            Image(.silverpiece)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 33)
+                            // Text
+                            Text("Silver Piece")
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                        }
+                        .padding(.bottom, -5)
+                        
+                        // Convertion Input
+                        TextField("Amount", text: $leftAmount)
+                            .textFieldStyle(.roundedBorder)
+                            
+                        
+                    
+                    }
+                    
+                    // =
+                    Image(systemName: "equal")
+                        .font(.largeTitle)
+                        .foregroundStyle(.white)
+                        .symbolEffect(.pulse)
+                    
+                    
+                    
+                    // Right Side
+                    VStack {
+                        
+                        // Coin type
+                        HStack {
+                            // Image
+                            Image(.goldpiece)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 33)
+                            // Text
+                            // Text
+                            Text("Gold Piece")
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                        }
+                        .padding(.bottom, -5)
+                        
+                        // Convertion Input
+                        TextField("Amount", text: $rightAmount)
+                            .textFieldStyle(.roundedBorder)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    
+                }
+                .padding()
+                .background(.black.opacity(0.5))
+                .clipShape(.capsule)
+                
+                Spacer()
+                
+                // Info button
+                HStack {
+                    Spacer()
+                    
+                    Button {
+                        showExchangeInfo.toggle()
+                        print("info: \(showExchangeInfo)")
+                    } label: {
+                        Image(systemName: "info.circle.fill")
+                            .font(.largeTitle)
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.trailing)
+                }
             }
+//            .border(.blue)
         }
     }
 }
