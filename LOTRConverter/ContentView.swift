@@ -8,18 +8,127 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var showExchangeInfo = false
+    @State var showSelectCurrency = false
+    
+    @State var leftAmount = ""
+    @State var rightAmount = ""
+    
+    @State var leftCurrency: Currency = .silverPiece
+    @State var rightCurrency: Currency = .goldPiece
+    
     var body: some View {
         ZStack {
+            //Background
             Image(.background)
-                .scaledToFit()
+                .resizable()
+                .ignoresSafeArea()
+            
             VStack {
-                Image(systemName: "globe")
-                    .imageScale(.large)
-                    .foregroundStyle(.tint)
-                    .padding()
-                Text("Hello, world!")
-                    .bold()
-                    .foregroundColor(.white)
+                //Poney Image
+                Image(.prancingpony)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 200)
+                
+                // Currency Exchange Text
+                Text("Currency Exchange")
+                    .font(.largeTitle)
+                    .foregroundStyle(.white)
+                
+                HStack {
+                    // Section Convertion
+                    
+                    // Left Side
+                    VStack {
+                        
+                        // Coin type
+                        HStack {
+                            // Image
+                            Image(leftCurrency.image)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 33)
+                            // Text
+                            Text(leftCurrency.name)
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                        }
+                        .padding(.bottom, -5)
+                        .onTapGesture {
+                            showSelectCurrency.toggle()
+                        }
+                        
+                        // Convertion Input
+                        TextField("Amount", text: $leftAmount)
+                            .textFieldStyle(.roundedBorder)
+                            
+                        
+                    
+                    }
+                    
+                    // =
+                    Image(systemName: "equal")
+                        .font(.largeTitle)
+                        .foregroundStyle(.white)
+                        .symbolEffect(.pulse)
+                    
+                    
+                    
+                    // Right Side
+                    VStack {
+                        
+                        // Coin type
+                        HStack {
+                            // Image
+                            Image(rightCurrency.image)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 33)
+                            // Text
+                            // Text
+                            Text(rightCurrency.name)
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                        }
+                        .padding(.bottom, -5)
+                        .onTapGesture {
+                            showSelectCurrency.toggle()
+                        }
+                        
+                        // Convertion Input
+                        TextField("Amount", text: $rightAmount)
+                            .textFieldStyle(.roundedBorder)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    
+                }
+                .padding()
+                .background(.black.opacity(0.5))
+                .clipShape(.capsule)
+                
+                Spacer()
+                
+                // Info button
+                HStack {
+                    Spacer()
+                    
+                    Button {
+                        showExchangeInfo.toggle()
+                        print("info: \(showExchangeInfo)")
+                    } label: {
+                        Image(systemName: "info.circle.fill")
+                            .font(.largeTitle)
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.trailing)
+                    .sheet(isPresented: $showExchangeInfo) {
+                        ExchangeInfo()
+                    }
+                    .sheet(isPresented: $showSelectCurrency) {
+                        SelectCurrency(topCurrency: self.$leftCurrency, bottomCurrency: self.$rightCurrency)
+                    }
+                }
             }
         }
     }
