@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import TipKit
 
 struct ContentView: View {
     @State var showExchangeInfo = false
@@ -19,6 +20,8 @@ struct ContentView: View {
     
     @State var leftCurrency: Currency = .silverPiece
     @State var rightCurrency: Currency = .goldPiece
+    
+    let currencyTip = CurrencyTip()
     
     var body: some View {
         ZStack {
@@ -60,7 +63,9 @@ struct ContentView: View {
                         .padding(.bottom, -5)
                         .onTapGesture {
                             showSelectCurrency.toggle()
+                            currencyTip.invalidate(reason: .actionPerformed)
                         }
+                        .popoverTip(currencyTip, arrowEdge: .bottom)
                         
                         // Convertion Input
                         TextField("Amount", text: $leftAmount)
@@ -93,6 +98,7 @@ struct ContentView: View {
                         .padding(.bottom, -5)
                         .onTapGesture {
                             showSelectCurrency.toggle()
+                            currencyTip.invalidate(reason: .actionPerformed)
                         }
                         
                         // Convertion Input
@@ -123,31 +129,33 @@ struct ContentView: View {
                             .foregroundStyle(.white)
                     }
                     .padding(.trailing)
-                    .onChange(of: leftAmount) {
-                        if leftTyping {
-                            rightAmount = leftCurrency.convert( leftAmount, to: rightCurrency)
-                        }
-                    }
-                    .onChange(of: rightAmount) {
-                        if rightTyping {
-                            leftAmount =  rightCurrency.convert(rightAmount, to: leftCurrency)
-                        }
-                    }
-                    .onChange(of: leftCurrency) {
-                        rightAmount = leftCurrency.convert( leftAmount, to: rightCurrency)
-                    }
-                    .onChange(of: rightCurrency) {
-                        leftAmount =  rightCurrency.convert(rightAmount, to: leftCurrency)
-                    }
-                    .sheet(isPresented: $showExchangeInfo) {
-                        ExchangeInfo()
-                    }
-                    .sheet(isPresented: $showSelectCurrency) {
-                        SelectCurrency(topCurrency: self.$leftCurrency, bottomCurrency: self.$rightCurrency)
-                    }
-
                 }
             }
+        }
+        .task {
+            try? Tips.configure()
+        }
+        .onChange(of: leftAmount) {
+            if leftTyping {
+                rightAmount = leftCurrency.convert( leftAmount, to: rightCurrency)
+            }
+        }
+        .onChange(of: rightAmount) {
+            if rightTyping {
+                leftAmount =  rightCurrency.convert(rightAmount, to: leftCurrency)
+            }
+        }
+        .onChange(of: leftCurrency) {
+            rightAmount = leftCurrency.convert( leftAmount, to: rightCurrency)
+        }
+        .onChange(of: rightCurrency) {
+            leftAmount =  rightCurrency.convert(rightAmount, to: leftCurrency)
+        }
+        .sheet(isPresented: $showExchangeInfo) {
+            ExchangeInfo()
+        }
+        .sheet(isPresented: $showSelectCurrency) {
+            SelectCurrency(topCurrency: self.$leftCurrency, bottomCurrency: self.$rightCurrency)
         }
     }
 }
